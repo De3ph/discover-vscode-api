@@ -10,7 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onStartupFinished" // extension will be activated when VS Code starts up
+    "onStartupFinished",
+    "onCommand:discover-vscode-api.helloWorld"
   ],
   "main": "./dist/extension.js",
   "contributes": {
