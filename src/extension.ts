@@ -11,29 +11,26 @@ export function activate(context: vscode.ExtensionContext) {
   )
   howToShowInformationMessage()
 
-
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   let disposableHelloWorld = vscode.commands.registerCommand(
     "discover-vscode-api.helloWorld",
     async () => {
-
       // The code you place here will be executed every time your command is executed
-      
       /* 
       howToShowInformationMessage()
       howToGetCurrentWorkspaceFolder()
       howToOpenProblemsPane()
       howToCreateFileInCurrentWorkspaceFolder()
       callAPI()
-      howToGetCurrentDiagnostics() 
+      howToGetCurrentDiagnostics()
       */
-
     }
   )
 
   context.subscriptions.push(disposableHelloWorld)
+  context.subscriptions.push(disposableRunActionOnFileSave)
 }
 
 const howToShowInformationMessage = () => {
@@ -48,27 +45,44 @@ const howToGetCurrentWorkspaceFolder = () => {
 }
 
 const howToOpenProblemsPane = () => {
-    vscode.commands.executeCommand("workbench.action.problems.focus")
+  vscode.commands.executeCommand("workbench.action.problems.focus")
 }
 
 const howToCreateFileInCurrentWorkspaceFolder = () => {
-  const workspacePath = vscode.workspace.rootPath;
+  const workspacePath = vscode.workspace.rootPath
 
-	  fs.writeFileSync(`${workspacePath}/test.txt`, "Hello World from discover-vscode-api!"); 
+  fs.writeFileSync(
+    `${workspacePath}/test.txt`,
+    "Hello World from discover-vscode-api!"
+  )
 }
 
 const howToGetCurrentDocumentURI = () => {
-  const currentDocumentURI : Uri = vscode.window.activeTextEditor?.document.uri as Uri;
-  console.log("🚀 ~ file: extension.ts:63 ~ currentDocumentURI:", currentDocumentURI)
-  return currentDocumentURI;
+  const currentDocumentURI: Uri = vscode.window.activeTextEditor?.document
+    .uri as Uri
+  console.log(
+    "🚀 ~ file: extension.ts:63 ~ currentDocumentURI:",
+    currentDocumentURI
+  )
+  return currentDocumentURI
 }
 
 const howToGetCurrentDiagnostics = () => {
-  const currentDocumentURI : Uri = howToGetCurrentDocumentURI();
-  const currentDiagnostics = vscode.languages.getDiagnostics(currentDocumentURI);
-  console.log("🚀 ~ file: extension.ts:63 ~ currentDiagnostics:", currentDiagnostics)
-  return currentDiagnostics;
+  const currentDocumentURI: Uri = howToGetCurrentDocumentURI()
+  const currentDiagnostics = vscode.languages.getDiagnostics(currentDocumentURI)
+  console.log(
+    "🚀 ~ file: extension.ts:63 ~ currentDiagnostics:",
+    currentDiagnostics
+  )
+  return currentDiagnostics
 }
+
+const disposableRunActionOnFileSave = vscode.commands.registerCommand(
+  "workbench.action.files.save",
+  () => {
+    console.log("File Saved!")
+  }
+)
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
