@@ -19,6 +19,41 @@
         "command": "discover-vscode-api.helloWorld",
         "title": "Hello World"
       }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "why-did-i-fail",
+          "title": "Why Did I fail?",
+          "icon": "./assets/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "why-did-i-fail": [
+        {
+          "type": "webview",
+          "id": "info",
+          "name": "Info"
+        },
+        {
+          "id": "languages",
+          "name": "Languages",
+          "type": "webview"
+        },
+        {
+          "id": "errors",
+          "name": "Errors",
+          "type": "webview"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "why-did-i-fail",
+        "contents": "In order to use git features, you can open a folder containing a git repository or clone from a URL.\n[Open Folder](command:vscode.openFolder)\n[Clone Repository](command:git.clone)\nTo learn more about how to use git and source control in VS Code [read our docs](https://aka.ms/vscode-scm).",
+        "when": "workbenchState"
+      }
     ]
   },
   "scripts": {
