@@ -1,1 +1,3 @@
-pri("aasd")
+if(a)
+    print("ui")
+    return

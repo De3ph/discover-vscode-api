@@ -4,6 +4,7 @@ import * as fs from "fs"
 import callAPI from "./callAPI"
 import type {Uri} from "vscode"
 import { InfoViewProvider } from "./modules/InfoViewProvider"
+import { getFile } from "./modules/getExternalHtml";
 
 // This method is called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
@@ -27,6 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
       callAPI()
       howToGetCurrentDiagnostics()
       */
+
+      getFile();
     }
   )
 
@@ -94,17 +97,6 @@ const disposableRunActionOnFileSave = vscode.commands.registerCommand(
   }
 )
 
-function getWebviewContent() {
-  // Return the HTML content for the panel
-  return `
-      <html>
-      <body>
-          <h1>Custom View</h1>
-          <p>This is a custom view in Visual Studio Code.</p>
-      </body>
-      </html>
-  `
-}
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
