@@ -25,16 +25,42 @@ export class InfoViewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri]
     };
 
-    webviewView.webview.html = getWebviewContent(this._extensionUri);
+    webviewView.webview.html = await getWebviewContent(
+      this._extensionUri,
+      webviewView
+    );
   }
 }
 
-function getWebviewContent(extensionUri: vscode.Uri): string {
+async function getWebviewContent(
+  extensionUri: vscode.Uri,
+  webviewView: vscode.WebviewView
+): Promise<string> {
   // Return the HTML content for the panel
   try {
     const htmlFileName = "index.html";
-    const htmlPath = path.join(__dirname, htmlFileName);
-    const stringHtml = fs.readFileSync(htmlPath).toString();
+    const cssFileName = "index.css";
+    const jsFileName = "index.js";
+
+    const htmlPath = path.join(__dirname, "ui", htmlFileName);
+    const cssPath = path.join(__dirname, "ui", cssFileName);
+    const jsPath = path.join(__dirname, "ui", jsFileName);
+
+    let stringHtml = fs.readFileSync(htmlPath).toString();
+    const stringCss = fs.readFileSync(cssPath).toString();
+    const stringJs = fs.readFileSync(jsPath).toString();
+
+    stringHtml = stringHtml.replace(
+      '<link rel="stylesheet" href="/index.css">',
+      `<link  href="/index.css">`
+    );
+    stringHtml = stringHtml.replace(
+      '<script type="module" crossorigin src="/index.js"></script>',
+      `<script>${stringJs}</script>`
+    );
+
+    console.log(stringHtml);
+
     return stringHtml;
   } catch (e) {
     console.log(e);
