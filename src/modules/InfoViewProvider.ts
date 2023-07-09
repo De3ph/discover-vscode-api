@@ -25,15 +25,11 @@ export class InfoViewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri]
     };
 
-    webviewView.webview.html = await getWebviewContent(
-      this._extensionUri,
-      webviewView
-    );
+    webviewView.webview.html = await getWebviewContent(webviewView);
   }
 }
 
 async function getWebviewContent(
-  extensionUri: vscode.Uri,
   webviewView: vscode.WebviewView
 ): Promise<string> {
   // Return the HTML content for the panel
@@ -41,27 +37,60 @@ async function getWebviewContent(
     const htmlFileName = "index.html";
     const cssFileName = "index.css";
     const jsFileName = "index.js";
-
+    /*
     const htmlPath = path.join(__dirname, "ui", htmlFileName);
     const cssPath = path.join(__dirname, "ui", cssFileName);
     const jsPath = path.join(__dirname, "ui", jsFileName);
 
     let stringHtml = fs.readFileSync(htmlPath).toString();
-    const stringCss = fs.readFileSync(cssPath).toString();
+    const stringCss = fs.readFileSync(cssPath).toString().trim();
     const stringJs = fs.readFileSync(jsPath).toString();
 
     stringHtml = stringHtml.replace(
       '<link rel="stylesheet" href="/index.css">',
-      `<link  href="/index.css">`
+      '<link rel="stylesheet" href="index.css">'
     );
     stringHtml = stringHtml.replace(
       '<script type="module" crossorigin src="/index.js"></script>',
-      `<script>${stringJs}</script>`
+      '<script type="module" crossorigin src="index.js"></script>'
     );
 
-    console.log(stringHtml);
+    fs.writeFileSync(path.join(__dirname, "ui", htmlFileName), stringHtml);
 
-    return stringHtml;
+    return `
+    ${stringHtml}
+    `; */
+
+    let html = fs.readFileSync(
+      vscode.Uri.file(path.join(__dirname, "ui", htmlFileName)).with({
+        scheme: "vscode-resource"
+      }).fsPath,
+      "utf-8"
+    );
+
+    const pathToCss = vscode.Uri.file(path.join(__dirname, "ui", cssFileName));
+    const pathToJs = vscode.Uri.file(path.join(__dirname, "ui", jsFileName));
+
+    html = html.replace(
+      '<link rel="stylesheet" href="/index.css">',
+      '<link rel="stylesheet" href="{{pathToCss}}">'
+    );
+    html = html.replace(
+      '<script type="module" crossorigin src="/index.js"></script>',
+      '<script type="module" crossorigin src="{{pathToJs}}"></script>'
+    );
+
+    html = html.replace(
+      "{{pathToCss}}",
+      String(webviewView.webview.asWebviewUri(pathToCss))
+    );
+    html = html.replace(
+      "{{pathToJs}}",
+      String(webviewView.webview.asWebviewUri(pathToJs))
+    );
+    console.log("🚀 ~ file: InfoViewProvider.ts:91 ~ html:", html);
+
+    return html;
   } catch (e) {
     console.log(e);
 
