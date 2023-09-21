@@ -18,32 +18,30 @@ export function activate(context: vscode.ExtensionContext) {
   // The commandId parameter must match the command field in package.json
   let disposableHelloWorld = vscode.commands.registerCommand(
     "discover-vscode-api.helloWorld",
-    async () => {
+    () => {
       // The code you place here will be executed every time your command is executed
-      /* 
-      howToShowInformationMessage()
-      howToGetCurrentWorkspaceFolder()
-      howToOpenProblemsPane()
-      howToCreateFileInCurrentWorkspaceFolder()
-      callAPI()
-      howToGetCurrentDiagnostics()
-      */
 
-      getFile();
+      // howToShowInformationMessage()
+      // howToGetCurrentWorkspaceFolder()
+      // howToOpenProblemsPane()
+      // howToCreateFileInCurrentWorkspaceFolder()
+      // callAPI()
+      howToGetCurrentDiagnostics()
+      // getFile()
     }
   )
 
   context.subscriptions.push(disposableHelloWorld)
-  context.subscriptions.push(disposableRunActionOnFileSave)
+  // context.subscriptions.push(disposableRunActionOnFileSave)
 
-  const viewProvider = new InfoViewProvider(context.extensionUri)
+  /* const viewProvider = new InfoViewProvider(context.extensionUri)
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       InfoViewProvider.viewType,
       viewProvider
     )
-  )
+  ) */
 }
 
 const howToShowInformationMessage = () => {
@@ -51,7 +49,7 @@ const howToShowInformationMessage = () => {
 }
 
 const howToGetCurrentWorkspaceFolder = () => {
-  const currentWorkSpaceFolder = vscode.workspace.rootPath
+  const currentWorkSpaceFolder = vscode.workspace.workspaceFolders?.[0].uri
   console.log(
     `How to get the current workspace folder: ${currentWorkSpaceFolder}`
   )
@@ -62,12 +60,13 @@ const howToOpenProblemsPane = () => {
 }
 
 const howToCreateFileInCurrentWorkspaceFolder = () => {
-  const workspacePath = vscode.workspace.rootPath
+  const workspacePath = vscode.workspace.workspaceFolders?.[0]?.name
 
   fs.writeFileSync(
     `${workspacePath}/test.txt`,
     "Hello World from discover-vscode-api!"
   )
+  fs.writeFileSync(`${workspacePath}/test.txt`, "What the f..")
 }
 
 const howToGetCurrentDocumentURI = () => {
@@ -81,6 +80,10 @@ const howToGetCurrentDocumentURI = () => {
 }
 
 const howToGetCurrentDiagnostics = () => {
+  /* 
+      vscode.languages.getDiagnostics() , açık olan tüm dosyalardaki hataları alıyor
+  
+  */
   const currentDocumentURI: Uri = howToGetCurrentDocumentURI()
   const currentDiagnostics = vscode.languages.getDiagnostics(currentDocumentURI)
   console.log(
@@ -90,12 +93,37 @@ const howToGetCurrentDiagnostics = () => {
   return currentDiagnostics
 }
 
-const disposableRunActionOnFileSave = vscode.commands.registerCommand(
+const howToGetCurrentDocumentLanguageCode = () => {
+  return vscode.window.activeTextEditor?.document?.languageId
+}
+
+const howToCheckSettings = () => {
+  /* 
+    python da problems kısmında çıkan mesajlar pylance tarafından veriliyor. Eğer "python.languageServer" -> "Default" veya "Pylance" değilse vermiyor
+  
+  */
+  const settings = vscode.workspace.getConfiguration().get("python")
+  return settings
+}
+
+vscode.workspace.onDidSaveTextDocument((document:vscode.TextDocument) => {
+  console.log("File Saved!")
+  const diags = vscode.languages.getDiagnostics(document.uri).length
+  vscode.window.showInformationMessage(
+    `total ${diags} diagnostics detected in your currently open file.`
+  )
+})
+
+/* const disposableRunActionOnFileSave = vscode.commands.registerCommand(
   "workbench.action.files.save",
   () => {
     console.log("File Saved!")
+    const diagnostics = howToGetCurrentDiagnostics().length
+    vscode.window.showInformationMessage(
+      `total ${diagnostics} diagnostics detected in your currently open file.`
+    )
   }
-)
+) */
 
 
 // This method is called when your extension is deactivated
