@@ -3,6 +3,10 @@
   "displayName": "discover-vscode-api",
   "description": "",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
   "engines": {
     "vscode": "^1.79.0"
   },
@@ -62,8 +66,7 @@
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
     "test-compile": "tsc -p ./",
-    "aftercompile": "cp -r ui/dist dist/ui",
-    "compile": "webpack && yarn aftercompile ",
+    "compile": "webpack",
     "watch": "webpack --watch",
     "package": "webpack --mode production --devtool hidden-source-map",
     "compile-tests": "tsc -p . --outDir out",
@@ -93,3 +96,4 @@
     "axios": "^1.4.0"
   }
 }
+

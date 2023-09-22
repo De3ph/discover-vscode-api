@@ -2,23 +2,47 @@
 import * as vscode from "vscode"
 import * as fs from "fs"
 import callAPI from "./callAPI"
-import type {Uri} from "vscode"
+import type { Uri } from "vscode"
 import { InfoViewProvider } from "./modules/InfoViewProvider"
-import { getFile } from "./modules/getExternalHtml";
+import { getFile } from "./modules/getExternalHtml"
 
 // This method is called when your extension is activated
 export function activate(context: vscode.ExtensionContext) {
-  console.log(
-    'Congratulations, your extension "discover-vscode-api" is now active!'
-  )
   howToShowInformationMessage()
+
+  const usernameKey = "errorpad.username"
+
+  const store = context.globalState
+
+  const usernameValue = store.get(usernameKey)
+
+  if (!usernameValue) {
+    vscode.window
+      .showInputBox({
+        title: "Enter your ErrorPad username: ",
+        validateInput: (value) => {
+          if (value === null || value === undefined || value === "") {
+            return "Error"
+          }
+          return null
+        }
+      })
+      .then((val) => {
+        console.log("🚀 ~ file: extension.ts:31 ~ .then ~ val:", val)
+        store.update(usernameKey, JSON.stringify(val))
+        // store.setKeysForSync([usernameKey])
+      })
+  } else {
+    vscode.window.showInformationMessage(`hi ${usernameValue}`)
+  }
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
+
   let disposableHelloWorld = vscode.commands.registerCommand(
     "discover-vscode-api.helloWorld",
-    () => {
+    async () => {
       // The code you place here will be executed every time your command is executed
 
       // howToShowInformationMessage()
@@ -43,6 +67,9 @@ export function activate(context: vscode.ExtensionContext) {
     )
   ) */
 }
+
+// This method is called when your extension is deactivated
+export function deactivate() {}
 
 const howToShowInformationMessage = () => {
   vscode.window.showInformationMessage("Hello World from discover-vscode-api!")
@@ -106,25 +133,10 @@ const howToCheckSettings = () => {
   return settings
 }
 
-vscode.workspace.onDidSaveTextDocument((document:vscode.TextDocument) => {
+vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
   console.log("File Saved!")
   const diags = vscode.languages.getDiagnostics(document.uri).length
   vscode.window.showInformationMessage(
     `total ${diags} diagnostics detected in your currently open file.`
   )
 })
-
-/* const disposableRunActionOnFileSave = vscode.commands.registerCommand(
-  "workbench.action.files.save",
-  () => {
-    console.log("File Saved!")
-    const diagnostics = howToGetCurrentDiagnostics().length
-    vscode.window.showInformationMessage(
-      `total ${diagnostics} diagnostics detected in your currently open file.`
-    )
-  }
-) */
-
-
-// This method is called when your extension is deactivated
-export function deactivate() {}
